@@ -11,7 +11,8 @@ requires-python = ">=3.7"
 dependencies = [
     "numpy",
     "opencv-python",
-    "pyautogui"
+    "pyautogui",
+    "selenium"
 ]
 keywords = ["captcha-solver", "turnstile-solver", "cloudflare-bypass", "solver", "automation"]
 classifiers = [
