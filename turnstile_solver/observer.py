@@ -40,7 +40,6 @@ class TurnstileObserver:
                 function observeWidget() {{
                     if ((Date.now() - widgetStartTime) / 1000 >= {detect_timeout}) {{
                         window._turnstileDetected = true;
-                        console.warn("Turnstile widget not detected within timeout.");
                         return;
                     }};
 
@@ -51,10 +50,8 @@ class TurnstileObserver:
                     if (!input) return setTimeout(observeWidget, 1000);
 
                     window._turnstileDetected = true;
-                    console.log("Turnstile widget detected, starting observer...");
 
                     const observer = new MutationObserver(() => {{
-                        console.log("Turnstile widget attributes changed, assuming solved.");
                         sessionStorage.setItem("turnstile_verified", "true");
                         observer.disconnect();
                     }});
@@ -85,7 +82,6 @@ class TurnstileObserver:
                 function observeChallenge() {{
                     if ((Date.now() - challengeStartTime) / 1000 >= {detect_timeout}) {{
                         window._turnstileDetected = false;
-                        console.warn("Turnstile challenge not detected within timeout.");
                         return;
                     }};
 
@@ -93,11 +89,9 @@ class TurnstileObserver:
                     if (!target || !target.parentElement) return setTimeout(observeChallenge, 1000);
 
                     window._turnstileDetected = true;
-                    console.log("Turnstile challenge detected, starting observer...");
 
                     function check() {{
                         if (target.getClientRects().length > 0) {{
-                            console.log("Turnstile challenge solved!");
                             sessionStorage.setItem("turnstile_verified", "true");
                             observer.disconnect();
                         }}
