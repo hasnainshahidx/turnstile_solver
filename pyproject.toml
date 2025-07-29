@@ -1,0 +1,33 @@
+[project]
+name = "turnstile_solver"
+version = "0.1.0"
+description = "Click and solve Cloudflare Turnstile CAPTCHA — supports both headless and GUI modes."
+authors = [
+    {name = "Hasnain Shahid", email = "hasnainshahid@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "numpy",
+    "opencv-python",
+    "pyautogui"
+]
+keywords = ["captcha-solver", "turnstile-solver", "cloudflare-bypass", "solver", "automation"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent"
+]
+
+[project.urls]
+Homepage = "https://github.com/hasnainshahidx/turnstile_solver/"
+Repository = "https://github.com/hasnainshahidx/turnstile_solver/"
+Author = "https://hasnainshahidx.github.io/"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["turnstile_solver"]

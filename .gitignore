@@ -1,0 +1,8 @@
+__pycache__/
+downloaded_files/
+local_debugging/
+local_test.py
+.venv/
+MANIFEST.in
+dist/
+turnstile_solver.egg-info/
