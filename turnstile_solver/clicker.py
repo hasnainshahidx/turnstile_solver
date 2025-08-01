@@ -62,13 +62,10 @@ class TurnstileClicker:
         """
         Convert browser-relative coordinates to screen coordinates.
 
-        :param driver: Selenium WebDriver instance
-        :param element_x: X relative to viewport/document
-        :param element_y: Y relative to viewport/document
+        :param element_x: X relative to document
+        :param element_y: Y relative to document
         :return: (screen_x, screen_y)
         """
-
-        # Get window.screenX, screenY, and scroll offsets from runtime
         env = self.driver.execute_cdp_cmd("Runtime.evaluate", {
             "expression": """
                 (function() {
@@ -76,21 +73,19 @@ class TurnstileClicker:
                         screenX: window.screenX,
                         screenY: window.screenY,
                         scrollX: window.scrollX,
-                        scrollY: window.scrollY
+                        scrollY: window.scrollY,
+                        outerHeight: window.outerHeight,
+                        innerHeight: window.innerHeight
                     };
                 })();
             """,
             "returnByValue": True
         })["result"]["value"]
 
-        # Get outer vs inner window offset (for browser chrome height)
-        layout = self.driver.execute_cdp_cmd("Page.getLayoutMetrics", {})
-
-        # Calculate height of browser chrome (address bar, tabs etc.)
-        offset_y = layout["layoutViewport"]["pageY"]
+        chrome_offset_y = env["outerHeight"] - env["innerHeight"]
 
         screen_x = env["screenX"] + element_x - env["scrollX"]
-        screen_y = env["screenY"] + offset_y + element_y - env["scrollY"]
+        screen_y = env["screenY"] + chrome_offset_y + element_y - env["scrollY"]
 
         return int(screen_x), int(screen_y)
 
