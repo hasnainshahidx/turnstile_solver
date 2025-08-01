@@ -1,9 +1,9 @@
 [project]
 name = "turnstile_solver"
-version = "0.1.0"
+version = "0.1.4"
 description = "Click and solve Cloudflare Turnstile CAPTCHA — supports both headless and GUI modes."
 authors = [
-    {name = "Hasnain Shahid", email = "hasnainshahid@gmail.com"}
+    {name = "Hasnain Shahid", email = "hasnainshahid822@gmail.com"}
 ]
 license = {text = "MIT"}
 readme = "README.md"
