@@ -26,7 +26,10 @@ class TurnstileObserver:
         self.detect_timeout = 5  # turnstile detection timeout set with the Solver.detect()
 
         # Tracks if Turnstile was previously detected but not yet verified
-        self._was_detected = False
+        self._was_detected = {
+            "embedded": False,
+            "challenge": False
+        }
 
     def _observe_embedded(self, solve_timeout, detect_timeout) -> None:
         """
@@ -39,7 +42,7 @@ class TurnstileObserver:
             if (window.top === window.self) {{
                 function observeWidget() {{
                     if ((Date.now() - widgetStartTime) / 1000 >= {detect_timeout}) {{
-                        window._turnstileDetected = true;
+                        window._embeddedDetected = false;
                         return;
                     }};
 
@@ -49,7 +52,7 @@ class TurnstileObserver:
                     const input = widget.querySelector("input");
                     if (!input) return setTimeout(observeWidget, 1000);
 
-                    window._turnstileDetected = true;
+                    window._embeddedDetected = true;
 
                     const observer = new MutationObserver(() => {{
                         sessionStorage.setItem("turnstile_verified", "true");
@@ -81,14 +84,14 @@ class TurnstileObserver:
             if (window.top === window.self) {{
                 function observeChallenge() {{
                     if ((Date.now() - challengeStartTime) / 1000 >= {detect_timeout}) {{
-                        window._turnstileDetected = false;
+                        window._challengeDetected = false;
                         return;
                     }};
 
                     const target = document.querySelector("#challenge-success-text");
                     if (!target || !target.parentElement) return setTimeout(observeChallenge, 1000);
 
-                    window._turnstileDetected = true;
+                    window._challengeDetected = true;
 
                     function check() {{
                         if (target.getClientRects().length > 0) {{
@@ -155,8 +158,11 @@ class TurnstileObserver:
                     const val = sessionStorage.getItem("turnstile_verified");
                     if (val) sessionStorage.removeItem("turnstile_verified");
                     return {
-                        verified: val,
-                        detected: (typeof window._turnstileDetected !== "undefined") ? window._turnstileDetected : null
+                        verified: val === "true",
+                        detected: {
+                            embedded: (typeof window._embeddedDetected !== "undefined") ? window._embeddedDetected : null,
+                            challenge: (typeof window._challengeDetected !== "undefined") ? window._challengeDetected : null
+                        }
                     };
                 })()
             """,
@@ -164,19 +170,25 @@ class TurnstileObserver:
         })["result"]
 
         verified = result.get("value", {}).get("verified", False)
-        detected = result.get("value", {}).get("detected", False)
+        detected = result.get("value", {}).get("detected", {})
 
-        if verified == 'true':
+        if verified is True:
+            # reset detection flags
+            for key in self._was_detected:
+                self._was_detected[key] = False
             return True
 
-        if detected is True:
-            self._was_detected = True
+        for key, detected in detected.items():
+            print("key: ", key, "detected: ", detected)
+            if detected is True:
+                self._was_detected[key] = True
 
-        elif detected is False and self._was_detected:
             # If it was detected earlier but is now missing,
             # it's likely the domain changed or the observer was removed.
             # Treat as verified in that case.
-            return True
+            elif detected is False and self._was_detected[key]:
+                self._was_detected[key] = False # reset detection flag
+                return True
 
         return False
 
