@@ -151,8 +151,8 @@ Contributions are welcome and appreciated!
 
 ## 🙏 Note from the Author
 
-This is my first open-source project, developed at the age of 18.  
-As a young developer, I'm continuously learning—so there might be imperfections or areas for improvement.  
+This is my first open-source project
+As a new developer, I'm continuously learning—so there might be imperfections or areas for improvement.  
 Any feedback, suggestions, or contributions are more than welcome to help make this project better!
 
 ## 📬 Contact & Support
